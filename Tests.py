@@ -64,6 +64,15 @@ def test_concatenate(editor, file_to_concatenate):
     assert starting_len + adding_len == len(editor.frames)
 
 
+def test_reverse(small_editor):
+    starting_bytes = small_editor.frames
+    starting_len = len(starting_bytes)
+    small_editor.reverse()
+    assert starting_len == len(small_editor.frames)
+    small_editor.reverse()
+    assert starting_bytes == small_editor.frames
+
+
 def test_clear(editor):
     editor.change_volume(3)
     directory = os.path.join('ChangesHistory')

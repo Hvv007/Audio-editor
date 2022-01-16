@@ -99,6 +99,11 @@ class Editor:
         self.set_new_change()
         print('Файлы склеины')
 
+    def reverse(self):
+        self.frames = audioop.reverse(self.frames, self.sample_width)
+        self.set_new_change()
+        print('Аудиодорожка была перевёрнута')
+
     def undo(self):
         if self.changes_stack:
             os.remove(self.current_change)

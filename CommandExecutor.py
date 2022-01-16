@@ -8,6 +8,7 @@ commands_msg = "Команды для изменения файла:\n" \
                "change_volume [coef]\n" \
                "cut [start] [end]\n" \
                "concatenate [file_name]\n" \
+               "reverse\n" \
                "undo\n" \
                "Выйти:\n" \
                "exit\n" \
@@ -48,6 +49,8 @@ class CommandExecutor:
                 self.handle_concatenation(args)
             elif args[0] == 'cut':
                 self.handle_cut(args)
+            elif args[0] == 'reverse':
+                self.editor.reverse()
             else:
                 print('Неверный ввод, пропишите commands, чтобы ознакомиться со списком доступных команд')
         except IndexError:
