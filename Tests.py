@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import pytest
 import wave
 import os
@@ -26,8 +28,9 @@ def small_editor(file_to_concatenate):
 
 
 def test_speed_change(test_file, editor):
-    with wave.open(test_file) as file:
-        start_speed = file.getframerate()
+    file = wave.open(test_file)
+    start_speed = file.getframerate()
+    file.close()
     editor.change_speed(0.1)
     assert editor.frame_rate == start_speed * 0.1
 
@@ -54,8 +57,9 @@ def test_cut(editor):
 
 def test_concatenate(editor, file_to_concatenate):
     starting_len = len(editor.frames)
-    with wave.open(file_to_concatenate) as file:
-        adding_len = len(file.readframes(-1))
+    file = wave.open(file_to_concatenate)
+    adding_len = len(file.readframes(-1))
+    file.close()
     editor.concatenate(file_to_concatenate)
     assert starting_len + adding_len == len(editor.frames)
 

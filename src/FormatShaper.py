@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import subprocess
 import contextlib
@@ -7,13 +9,13 @@ supported_formats = {'.mp3', '.wav', '.flac'}
 
 def check_file_existence(filename):
     if not os.path.isfile(filename):
-        raise ValueError(f"Файл {filename} не существует")
+        raise ValueError("Файл {} не существует".format(filename))
 
 
 def check_file_format(filename):
     file_format = os.path.splitext(filename)[1]
     if file_format not in supported_formats:
-        raise TypeError(f"Редактор не поддерживает формат {file_format}")
+        raise TypeError("Редактор не поддерживает формат {}".format(file_format))
 
 
 class FormatShaper:

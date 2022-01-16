@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import sys
 import wave
@@ -19,11 +21,12 @@ class Editor:
 
     def set_current_change(self):
         try:
-            with wave.open(self.current_change, 'rb') as file:
-                self.sample_width = file.getsampwidth()
-                self.frame_rate = file.getframerate()
-                self.channels_number = file.getnchannels()
-                self.frames = file.readframes(-1)
+            file = wave.open(self.current_change, 'rb')
+            self.sample_width = file.getsampwidth()
+            self.frame_rate = file.getframerate()
+            self.channels_number = file.getnchannels()
+            self.frames = file.readframes(-1)
+            file.close()
         except wave.Error as e:
             print("Файл не может быть преобразован в поддерживаемый формат" + e.args[0])
             sys.exit()
@@ -34,16 +37,17 @@ class Editor:
         self.change_number += 1
 
     def make_new_change(self):
-        filename = f'change_step_number_{self.change_number}.wav'
+        filename = 'change_step_number_{}.wav'.format(self.change_number)
         self.new_change = os.path.join(os.path.dirname(__file__), '../ChangesHistory', filename)
 
     def set_new_change(self):
         self.make_new_change()
-        with wave.open(self.new_change, 'wb') as new_file:
-            new_file.setsampwidth(self.sample_width)
-            new_file.setframerate(self.frame_rate)
-            new_file.setnchannels(self.channels_number)
-            new_file.writeframes(audioop.mul(self.frames, self.sample_width, self.volume))
+        new_file = wave.open(self.new_change, 'wb')
+        new_file.setsampwidth(self.sample_width)
+        new_file.setframerate(self.frame_rate)
+        new_file.setnchannels(self.channels_number)
+        new_file.writeframes(audioop.mul(self.frames, self.sample_width, self.volume))
+        new_file.close()
         self.volume = 1
         self.move_new_to_current_change()
 
@@ -53,7 +57,7 @@ class Editor:
             raise ValueError('Коэффициент должен быть не меньше нуля 0')
         self.volume = volume_coef
         self.set_new_change()
-        print(f'Громкость изменена с коэффициентом {volume_coef}')
+        print('Громкость изменена с коэффициентом {}'.format(volume_coef))
 
     def change_speed(self, new_speed_coef):
         speed_coef = float(new_speed_coef)
@@ -61,7 +65,7 @@ class Editor:
             raise ValueError('Коэффициент должен быть больше нуля 0')
         self.frame_rate *= speed_coef
         self.set_new_change()
-        print(f'Скорость изменена с коэффициентом {speed_coef}')
+        print('Скорость изменена с коэффициентом {}'.format(speed_coef))
 
     def cut(self, start, end):
         start = int(start)
@@ -75,20 +79,21 @@ class Editor:
         first_byte = start * frames_per_second
         last_byte = end * frames_per_second
         if first_byte >= len(self.frames):
-            raise ValueError(f'Начало фрагмента должен быть не больше длины аудидорожки равной {audio_len}')
+            raise ValueError('Начало фрагмента должен быть не больше длины аудидорожки равной {}'.format(audio_len))
         if end > audio_len:
-            raise ValueError(f'Конец фрагмента должен быть не больше длины аудидорожки равной {audio_len}')
+            raise ValueError('Конец фрагмента должен быть не больше длины аудидорожки равной {}'.format(audio_len))
         self.frames = self.frames[first_byte:last_byte]
         self.set_new_change()
-        print(f'Вырезан фрагмент начиная с {start} по {end} секунду')
+        print('Вырезан фрагмент начиная с {} по {} секунду'.format(start, end))
 
     def concatenate(self, new_file):
-        with wave.open(new_file, 'rb') as file_to_concatenate:
-            sample_width = file_to_concatenate.getsampwidth()
-            rate = file_to_concatenate.getframerate()
-            channels = file_to_concatenate.getnchannels()
-            frames = file_to_concatenate.readframes(-1)
-        if sample_width != self.sample_width or rate != self.frame_rate or channels != self.channels_number :
+        file_to_concatenate = wave.open(new_file, 'rb')
+        sample_width = file_to_concatenate.getsampwidth()
+        rate = file_to_concatenate.getframerate()
+        channels = file_to_concatenate.getnchannels()
+        frames = file_to_concatenate.readframes(-1)
+        file_to_concatenate.close()
+        if sample_width != self.sample_width or rate != self.frame_rate or channels != self.channels_number:
             raise ValueError("Эти файлы нельзя склеить")
         self.frames = self.frames + frames
         self.set_new_change()
