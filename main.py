@@ -9,6 +9,10 @@ from src.Editor import Editor
 
 
 def prepare_to_run(directory, opened_file):
+    if not os.path.exists('ChangesHistory'):
+        os.makedirs('ChangesHistory')
+    if not os.path.exists('Results'):
+        os.makedirs('Results')
     format_changer = FormatShaper
     Editor.clear_changes_history()
     first_editor_file = os.path.join(directory, 'ChangesHistory', 'start_file.wav')
