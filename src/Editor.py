@@ -50,7 +50,7 @@ class Editor:
     def change_volume(self, new_volume_coef):
         volume_coef = float(new_volume_coef)
         if volume_coef < 0:
-            raise ValueError('Коэффициент должен быть больше нуля 0')
+            raise ValueError('Коэффициент должен быть не меньше нуля 0')
         self.volume = volume_coef
         self.set_new_change()
         print(f'Громкость изменена с коэффициентом {volume_coef}')
