@@ -26,7 +26,7 @@ class CommandExecutor:
         self.path = path
 
     def run(self):
-        print('Пропишите commands, чтобы увидеть список доступных комманд')
+        print('Пропишите commands, чтобы увидеть список доступных комманд, или посмотрите раздел с командами в README')
         for line in sys.stdin:
             try:
                 self.execute_command(line.split())
